@@ -2,4 +2,6 @@
 
 # Project 01 - C Snake
 
+# IVÁN JOSUÉ DÍAZ VÁSQUEZ  -  17012329 
+
 [![License](https://img.shields.io/github/license/cc3-an-ug/pj01-snake)](https://github.com/cc3-an-ug/pj01-snake/blob/main/LICENSE)
