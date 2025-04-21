@@ -23,8 +23,66 @@ static void update_head(game_state_t* state, unsigned int snum);
 
 /* Tarea 1 */
 game_state_t* create_default_state() {
-  // TODO: Implementar esta funcion.
-  return NULL;
+  // Crear el estado del juego en memoria dinámica
+    game_state_t* state = malloc(sizeof(game_state_t));
+    if (!state) {
+        perror("Error al asignar memoria para game_state_t");
+        exit(EXIT_FAILURE);
+    }
+
+    // Inicializar dimensiones del tablero
+    state->num_rows = 18;
+    state->board = malloc(state->num_rows * sizeof(char*));
+    if (!state->board) {
+        perror("Error al asignar memoria para el tablero");
+        free(state);
+        exit(EXIT_FAILURE);
+    }
+
+    // Crear cada fila del tablero
+    for (unsigned int i = 0; i < state->num_rows; i++) {
+        state->board[i] = malloc(21 * sizeof(char)); // 20 columnas + 1 para '\0'
+        if (!state->board[i]) {
+            perror("Error al asignar memoria para una fila del tablero");
+            for (unsigned int j = 0; j < i; j++) {
+                free(state->board[j]);
+            }
+            free(state->board);
+            free(state);
+            exit(EXIT_FAILURE);
+        }
+        // Inicializar filas con espacios o bordes
+        if (i == 0 || i == state->num_rows - 1) {
+            strcpy(state->board[i], "####################");
+        } else {
+            strcpy(state->board[i], "#                  #");
+        }
+    }
+
+    // Colocar la serpiente y la fruta
+    strcpy(state->board[2], "# d>D    *         #");
+
+    // Inicializar número de serpientes
+    state->num_snakes = 1;
+    state->snakes = malloc(state->num_snakes * sizeof(snake_t));
+    if (!state->snakes) {
+        perror("Error al asignar memoria para las serpientes");
+        for (unsigned int i = 0; i < state->num_rows; i++) {
+            free(state->board[i]);
+        }
+        free(state->board);
+        free(state);
+        exit(EXIT_FAILURE);
+    }
+
+    // Inicializar la serpiente
+    state->snakes[0].tail_row = 2;
+    state->snakes[0].tail_col = 2;
+    state->snakes[0].head_row = 2;
+    state->snakes[0].head_col = 4;
+    state->snakes[0].live = true;
+
+    return state;
 }
 
 
