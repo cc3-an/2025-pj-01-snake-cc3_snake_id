@@ -88,8 +88,23 @@ game_state_t* create_default_state() {
 
 /* Tarea 2 */
 void free_state(game_state_t* state) {
-  // TODO: Implementar esta funcion.
-  return;
+  if (!state) {
+        return; // Si el estado es NULL, no hay nada que liberar
+    }
+
+    // Liberar cada fila del tablero
+    for (unsigned int i = 0; i < state->num_rows; i++) {
+        free(state->board[i]);
+    }
+
+    // Liberar el arreglo de punteros del tablero
+    free(state->board);
+
+    // Liberar el arreglo de serpientes
+    free(state->snakes);
+
+    // Liberar la estructura del estado
+    free(state);
 }
 
 
