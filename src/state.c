@@ -110,8 +110,14 @@ void free_state(game_state_t* state) {
 
 /* Tarea 3 */
 void print_board(game_state_t* state, FILE* fp) {
-  // TODO: Implementar esta funcion.
-  return;
+  if (!state || !fp) {
+        return; // Si el estado o el archivo son NULL, no hay nada que imprimir
+    }
+
+    // Iterar sobre cada fila del tablero
+    for (unsigned int i = 0; i < state->num_rows; i++) {
+        fprintf(fp, "%s\n", state->board[i]); // Imprimir la fila en el archivo
+    }
 }
 
 
