@@ -347,14 +347,105 @@ static void update_tail(game_state_t* state, unsigned int snum) {
 
 /* Tarea 4.5 */
 void update_state(game_state_t* state, int (*add_food)(game_state_t* state)) {
-  // TODO: Implementar esta funcion.
-  return;
+  // Iterar sobre todas las serpientes
+  for (unsigned int snum = 0; snum < state->num_snakes; snum++) {
+    // Verificar si la serpiente está viva
+    if (!state->snakes[snum].live) {
+        continue; // Saltar serpientes muertas
+    }
+
+    // Obtener el carácter de la celda a la que se moverá la cabeza
+    char next_char = next_square(state, snum);
+
+    // Manejar colisiones con paredes o cuerpos
+    if (next_char == '#' || is_snake(next_char)) {
+        // La serpiente muere
+        state->snakes[snum].live = false;
+        unsigned int head_row = state->snakes[snum].head_row;
+        unsigned int head_col = state->snakes[snum].head_col;
+        set_board_at(state, head_row, head_col, 'x'); // Reemplazar la cabeza con 'x'
+        continue; // Pasar a la siguiente serpiente
+    }
+
+    // Manejar si la serpiente come una fruta
+    if (next_char == '*') {
+        // Mover la cabeza sin mover la cola (crecimiento)
+        update_head(state, snum);
+        // Generar una nueva fruta
+        add_food(state);
+        continue; // Pasar a la siguiente serpiente
+    }
+
+    // Si no hay colisión ni fruta, mover la cabeza y la cola
+    update_head(state, snum);
+    update_tail(state, snum);
+}
 }
 
 /* Tarea 5 */
 game_state_t* load_board(char* filename) {
-  // TODO: Implementar esta funcion.
-  return NULL;
+  // Abrir el archivo en modo lectura
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        perror("Error al abrir el archivo");
+        return NULL;
+    }
+
+    // Crear la estructura game_state_t
+    game_state_t* state = malloc(sizeof(game_state_t));
+    if (!state) {
+        perror("Error al asignar memoria para game_state_t");
+        fclose(file);
+        return NULL;
+    }
+
+    // Inicializar valores iniciales
+    state->num_rows = 0;
+    state->board = NULL;
+    state->num_snakes = 0;
+    state->snakes = NULL;
+
+    // Leer el archivo línea por línea
+    char buffer[1024]; // Buffer temporal para leer líneas
+    while (fgets(buffer, sizeof(buffer), file)) {
+        // Remover el salto de línea al final de la línea
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+            len--;
+        }
+
+        // Asignar memoria para la nueva fila
+        char* row = malloc((len + 1) * sizeof(char));
+        if (!row) {
+            perror("Error al asignar memoria para una fila del tablero");
+            fclose(file);
+            free_state(state);
+            return NULL;
+        }
+
+        // Copiar la línea al tablero
+        strcpy(row, buffer);
+
+        // Reasignar memoria para agregar la nueva fila al tablero
+        char** new_board = realloc(state->board, (state->num_rows + 1) * sizeof(char*));
+        if (!new_board) {
+            perror("Error al reasignar memoria para el tablero");
+            free(row);
+            fclose(file);
+            free_state(state);
+            return NULL;
+        }
+
+        state->board = new_board;
+        state->board[state->num_rows] = row;
+        state->num_rows++;
+    }
+
+    // Cerrar el archivo
+    fclose(file);
+
+    return state;
 }
 
 
