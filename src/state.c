@@ -159,8 +159,7 @@ static void set_board_at(game_state_t* state, unsigned int row, unsigned int col
  * Retorna false de lo contrario.
 */
 static bool is_tail(char c) {
-  // TODO: Implementar esta funcion.
-  return true;
+  return c == 'w' || c == 'a' || c == 's' || c == 'd';
 }
 
 
@@ -170,8 +169,7 @@ static bool is_tail(char c) {
  * Retorna false de lo contrario.
 */
 static bool is_head(char c) {
-  // TODO: Implementar esta funcion.
-  return true;
+  return c == 'W' || c == 'A' || c == 'S' || c == 'D' || c == 'x';
 }
 
 
@@ -180,8 +178,7 @@ static bool is_head(char c) {
  * Una snake consiste de los siguientes caracteres: "wasd^<v>WASDx"
 */
 static bool is_snake(char c) {
-  // TODO: Implementar esta funcion.
-  return true;
+  return is_tail(c) || is_head(c) || c == '^' || c == '<' || c == 'v' || c == '>';
 }
 
 
@@ -191,8 +188,13 @@ static bool is_snake(char c) {
  * snake ("wasd").
 */
 static char body_to_tail(char c) {
-  // TODO: Implementar esta funcion.
-  return '?';
+  switch (c) {
+    case '^': return 'w';
+    case '<': return 'a';
+    case 'v': return 's';
+    case '>': return 'd';
+    default: return '?'; // Indefinido para caracteres no válidos
+  }
 }
 
 
@@ -202,8 +204,13 @@ static char body_to_tail(char c) {
  * ("^<v>").
 */
 static char head_to_body(char c) {
-  // TODO: Implementar esta funcion.
-  return '?';
+  switch (c) {
+        case 'W': return '^';
+        case 'A': return '<';
+        case 'S': return 'v';
+        case 'D': return '>';
+        default: return '?'; // Indefinido para caracteres no válidos
+    }
 }
 
 
@@ -213,7 +220,11 @@ static char head_to_body(char c) {
  * Retorna cur_row de lo contrario
 */
 static unsigned int get_next_row(unsigned int cur_row, char c) {
-  // TODO: Implementar esta funcion.
+  if (c == 'v' || c == 's' || c == 'S') {
+     return cur_row + 1;
+  } else if (c == '^' || c == 'w' || c == 'W') {
+     return cur_row - 1;
+  }
   return cur_row;
 }
 
@@ -224,8 +235,12 @@ static unsigned int get_next_row(unsigned int cur_row, char c) {
  * Retorna cur_col de lo contrario
 */
 static unsigned int get_next_col(unsigned int cur_col, char c) {
-  // TODO: Implementar esta funcion.
-  return cur_col;
+  if (c == '>' || c == 'd' || c == 'D') {
+        return cur_col + 1;
+    } else if (c == '<' || c == 'a' || c == 'A') {
+        return cur_col - 1;
+    }
+    return cur_col;
 }
 
 
