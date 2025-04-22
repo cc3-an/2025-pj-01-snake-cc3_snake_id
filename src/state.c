@@ -254,7 +254,19 @@ static unsigned int get_next_col(unsigned int cur_col, char c) {
 */
 static char next_square(game_state_t* state, unsigned int snum) {
   // TODO: Implementar esta funcion.
-  return '?';
+  // Obtener la posición actual de la cabeza de la serpiente
+    unsigned int head_row = state->snakes[snum].head_row;
+    unsigned int head_col = state->snakes[snum].head_col;
+
+    // Obtener el carácter de la cabeza de la serpiente
+    char head_char = get_board_at(state, head_row, head_col);
+
+    // Calcular la siguiente posición de la cabeza
+    unsigned int next_row = get_next_row(head_row, head_char);
+    unsigned int next_col = get_next_col(head_col, head_char);
+
+    // Retornar el carácter en la siguiente posición
+    return get_board_at(state, next_row, next_col);
 }
 
 
@@ -271,8 +283,27 @@ static char next_square(game_state_t* state, unsigned int snum) {
  * cuando se mueve la cabeza.
 */
 static void update_head(game_state_t* state, unsigned int snum) {
-  // TODO: Implementar esta funcion.
-  return;
+  // Obtener la posición actual de la cabeza de la serpiente
+    unsigned int head_row = state->snakes[snum].head_row;
+    unsigned int head_col = state->snakes[snum].head_col;
+
+    // Obtener el carácter de la cabeza de la serpiente
+    char head_char = get_board_at(state, head_row, head_col);
+
+    // Calcular la siguiente posición de la cabeza
+    unsigned int next_row = get_next_row(head_row, head_char);
+    unsigned int next_col = get_next_col(head_col, head_char);
+
+    // Actualizar el tablero con el nuevo carácter de la cabeza
+    char new_body_char = head_to_body(head_char); // Convertir la cabeza actual en cuerpo
+    set_board_at(state, head_row, head_col, new_body_char);
+
+    // Colocar la nueva cabeza en el tablero
+    set_board_at(state, next_row, next_col, head_char);
+
+    // Actualizar la posición de la cabeza en la estructura de la serpiente
+    state->snakes[snum].head_row = next_row;
+    state->snakes[snum].head_col = next_col;
 }
 
 
@@ -288,8 +319,30 @@ static void update_head(game_state_t* state, unsigned int snum) {
  * ...en la estructura snake: actualizar el row y col de la cola
 */
 static void update_tail(game_state_t* state, unsigned int snum) {
-  // TODO: Implementar esta funcion.
-  return;
+  // Obtener la posición actual de la cola de la serpiente
+    unsigned int tail_row = state->snakes[snum].tail_row;
+    unsigned int tail_col = state->snakes[snum].tail_col;
+
+    // Obtener el carácter actual de la cola
+    char tail_char = get_board_at(state, tail_row, tail_col);
+
+    // Borrar el carácter actual de la cola (colocar un espacio)
+    set_board_at(state, tail_row, tail_col, ' ');
+
+    // Calcular la nueva posición de la cola
+    unsigned int next_row = get_next_row(tail_row, tail_char);
+    unsigned int next_col = get_next_col(tail_col, tail_char);
+
+    // Obtener el carácter en la nueva posición de la cola
+    char new_tail_char = get_board_at(state, next_row, next_col);
+
+    // Cambiar el carácter de cuerpo a un carácter de cola
+    char updated_tail_char = body_to_tail(new_tail_char);
+    set_board_at(state, next_row, next_col, updated_tail_char);
+
+    // Actualizar la posición de la cola en la estructura de la serpiente
+    state->snakes[snum].tail_row = next_row;
+    state->snakes[snum].tail_col = next_col;
 }
 
 /* Tarea 4.5 */
