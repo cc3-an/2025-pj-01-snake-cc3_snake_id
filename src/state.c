@@ -459,8 +459,30 @@ game_state_t* load_board(char* filename) {
  * dada por la variable (snum)
 */
 static void find_head(game_state_t* state, unsigned int snum) {
-  // TODO: Implementar esta funcion.
-  return;
+  // Obtener la posición inicial de la cola
+    unsigned int cur_row = state->snakes[snum].tail_row;
+    unsigned int cur_col = state->snakes[snum].tail_col;
+
+    // Obtener el carácter actual de la cola
+    char cur_char = get_board_at(state, cur_row, cur_col);
+
+    // Seguir avanzando mientras no se encuentre la cabeza
+    while (!is_head(cur_char)) {
+        // Calcular la siguiente posición
+        unsigned int next_row = get_next_row(cur_row, cur_char);
+        unsigned int next_col = get_next_col(cur_col, cur_char);
+
+        // Actualizar la posición actual
+        cur_row = next_row;
+        cur_col = next_col;
+
+        // Obtener el carácter en la nueva posición
+        cur_char = get_board_at(state, cur_row, cur_col);
+    }
+
+    // Una vez encontrada la cabeza, actualizar los campos en la estructura
+    state->snakes[snum].head_row = cur_row;
+    state->snakes[snum].head_col = cur_col;
 }
 
 /* Tarea 6.2 */
