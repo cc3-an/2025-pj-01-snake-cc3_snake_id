@@ -487,6 +487,45 @@ static void find_head(game_state_t* state, unsigned int snum) {
 
 /* Tarea 6.2 */
 game_state_t* initialize_snakes(game_state_t* state) {
-  // TODO: Implementar esta funcion.
-  return NULL;
+  // Contar el número de serpientes en el tablero
+  unsigned int num_snakes = 0;
+
+  for (unsigned int row = 0; row < state->num_rows; row++) {
+      for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
+          if (is_tail(get_board_at(state, row, col))) {
+              num_snakes++;
+          }
+      }
+  }
+
+  // Asignar memoria para el arreglo de serpientes
+  state->snakes = malloc(num_snakes * sizeof(snake_t));
+  if (!state->snakes) {
+      perror("Error al asignar memoria para el arreglo de serpientes");
+      exit(EXIT_FAILURE);
+  }
+
+  state->num_snakes = num_snakes;
+
+  // Inicializar cada serpiente
+  unsigned int snake_index = 0;
+  for (unsigned int row = 0; row < state->num_rows; row++) {
+      for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
+          if (is_tail(get_board_at(state, row, col))) {
+              // Inicializar la cola de la serpiente
+              state->snakes[snake_index].tail_row = row;
+              state->snakes[snake_index].tail_col = col;
+
+              // Encontrar la cabeza de la serpiente
+              find_head(state, snake_index);
+
+              // Marcar la serpiente como viva
+              state->snakes[snake_index].live = true;
+
+              snake_index++;
+          }
+      }
+  }
+
+  return state;
 }
